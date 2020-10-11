@@ -21,6 +21,7 @@
     "babel-jest": "^26.5.2",
     "codecov": "^3.8.0",
     "jest": "^26.5.2",
+    "rollup": "^2.29.0",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0"
