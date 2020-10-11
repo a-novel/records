@@ -1,0 +1,27 @@
+{
+  "name": "records",
+  "version": "0.1.0",
+  "description": "History record tools for undo/redo custom algorithms.",
+  "main": "./lib/index.js",
+  "repository": "https://github.com/a-novel/records",
+  "author": "kushuh",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build": "rollup -c",
+    "build:publish": "yarn build && yarn publish",
+    "test": "jest --watchAll --coverage --coverageDirectory=./coverage/jest"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-transform-classes": "^7.10.4",
+    "@babel/preset-env": "^7.11.5",
+    "@jest/globals": "^26.5.2",
+    "babel-jest": "^26.5.2",
+    "codecov": "^3.8.0",
+    "jest": "^26.5.2",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0"
+  }
+}
