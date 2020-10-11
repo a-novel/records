@@ -125,9 +125,15 @@ class LocalHistory {
 	 */
 	apply = ct => {
 		const last = this.lastActiveIndex() + 1; // We want the first non active one.
+		const rollback = [];
+
 		for (let i = last; i < (last + ct) && i < this.#records.length; i++) {
-			this.#records[i] = this.#applyRecord(this.#records[i]);
+			const alteredRecord = this.#applyRecord(this.#records[i]);
+			this.#records[i] = alteredRecord;
+			rollback.push(alteredRecord);
 		}
+
+		return rollback;
 	};
 
 	/**
@@ -137,9 +143,15 @@ class LocalHistory {
 	 */
 	revert = ct => {
 		const last = this.lastActiveIndex();
+		const rollback = [];
+
 		for (let i = last; i > (last - ct) && i >= 0; i--) {
-			this.#records[i] = this.#revertRecord(this.#records[i]);
+			const alteredRecord = this.#revertRecord(this.#records[i]);
+			this.#records[i] = alteredRecord;
+			rollback.push(alteredRecord);
 		}
+
+		return rollback;
 	};
 
 	/**
@@ -151,15 +163,20 @@ class LocalHistory {
 		let last = this.lastActiveIndex() + 1; // We want the first non active one.
 
 		if (last < 0 || last >= this.#records.length) {
-			return;
+			return [];
 		}
 
-		this.#records[last] = this.#applyRecord(this.#records[last]);
+		const rollback = [this.#applyRecord(this.#records[last])];
+		this.#records[last] = rollback[0];
 
 		while (last < (this.#records.length - 1) && callback(this.#records[last + 1], this.#records[last])) {
 			last++;
-			this.#records[last] = this.#applyRecord(this.#records[last]);
+			const alteredRecord = this.#applyRecord(this.#records[last]);
+			this.#records[last] = alteredRecord;
+			rollback.push(alteredRecord);
 		}
+
+		return rollback;
 	};
 
 	/**
@@ -174,12 +191,17 @@ class LocalHistory {
 			return;
 		}
 
-		this.#records[last] = this.#revertRecord(this.#records[last]);
+		const rollback = [this.#revertRecord(this.#records[last])];
+		this.#records[last] = rollback[0];
 
 		while (last > 0 && callback(this.#records[last - 1], this.#records[last])) {
 			last--;
-			this.#records[last] = this.#revertRecord(this.#records[last]);
+			const alteredRecord = this.#revertRecord(this.#records[last]);
+			this.#records[last] = alteredRecord;
+			rollback.push(alteredRecord);
 		}
+
+		return rollback;
 	};
 
 	/**
