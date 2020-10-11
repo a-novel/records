@@ -12,17 +12,17 @@ describe(
 			expect(recorder.lastActiveIndex()).toEqual(-1);
 		});
 
-		it('should add a default entry when initialized with content and no records', () => {
+		it('should initialize with content and no records', () => {
 			const recorder = new LocalHistory('hello world');
 
 			expect(recorder.getValue()).toEqual('hello world');
-			expect(recorder.getRecords().length).toEqual(1);
-			expect(recorder.lastActiveIndex()).toEqual(0);
+			expect(recorder.getRecords().length).toEqual(0);
+			expect(recorder.lastActiveIndex()).toEqual(-1);
 		});
 
-		it('should not add default entry when initialized with records', () => {
+		it('should initialize with records', () => {
 			const recorder = new LocalHistory(
-				'hello',
+				'',
 				[
 					{from: '', to: 'hello', caret: {start: 0, end: 0}, active: true},
 					{from: '', to: ' world', caret: {start: 5, end: 5}, active: false}
@@ -33,18 +33,6 @@ describe(
 			expect(recorder.getRecords().length).toEqual(2);
 			expect(recorder.lastActiveIndex()).toEqual(0);
 			expect(recorder.checkIntegrity()).toEqual('');
-		});
-
-		it('should fail integrity test when value doesn\'t match record history', () => {
-			const recorder = new LocalHistory(
-				'hello world',
-				[
-					{from: '', to: 'hello', caret: {start: 0, end: 0}, active: true},
-					{from: '', to: ' world', caret: {start: 5, end: 5}, active: false}
-				]
-			);
-
-			expect(recorder.checkIntegrity()).toEqual('hello');
 		});
 	}
 );
@@ -74,27 +62,21 @@ describe(
 			const recorder = new LocalHistory('hello mama');
 			recorder.push({to: 'world', caret: {start: 6, end: 10}});
 
-			expect(recorder.getRecords().length).toEqual(2);
-			expect(recorder.lastActiveIndex()).toEqual(1);
+			expect(recorder.getRecords().length).toEqual(1);
+			expect(recorder.lastActiveIndex()).toEqual(0);
 			expect(recorder.getValue()).toEqual('hello world');
 
 			recorder.revert(1);
 
-			expect(recorder.getRecords().length).toEqual(2);
-			expect(recorder.lastActiveIndex()).toEqual(0);
+			expect(recorder.getRecords().length).toEqual(1);
+			expect(recorder.lastActiveIndex()).toEqual(-1);
 			expect(recorder.getValue()).toEqual('hello mama');
 
 			recorder.revert(1);
 
-			expect(recorder.getRecords().length).toEqual(2);
+			expect(recorder.getRecords().length).toEqual(1);
 			expect(recorder.lastActiveIndex()).toEqual(-1);
-			expect(recorder.getValue()).toEqual('');
-
-			recorder.revert(1);
-
-			expect(recorder.getRecords().length).toEqual(2);
-			expect(recorder.lastActiveIndex()).toEqual(-1);
-			expect(recorder.getValue()).toEqual('');
+			expect(recorder.getValue()).toEqual('hello mama');
 		});
 
 		it('should fallback on last value when redoing all undone changes', () => {
@@ -103,20 +85,20 @@ describe(
 			recorder.revert(1);
 			recorder.revert(1);
 
-			expect(recorder.getRecords().length).toEqual(2);
+			expect(recorder.getRecords().length).toEqual(1);
 			expect(recorder.lastActiveIndex()).toEqual(-1);
-			expect(recorder.getValue()).toEqual('');
+			expect(recorder.getValue()).toEqual('hello mama');
 
 			recorder.apply(Infinity);
 
-			expect(recorder.getRecords().length).toEqual(2);
-			expect(recorder.lastActiveIndex()).toEqual(1);
+			expect(recorder.getRecords().length).toEqual(1);
+			expect(recorder.lastActiveIndex()).toEqual(0);
 			expect(recorder.getValue()).toEqual('hello world');
 
 			recorder.apply(1);
 
-			expect(recorder.getRecords().length).toEqual(2);
-			expect(recorder.lastActiveIndex()).toEqual(1);
+			expect(recorder.getRecords().length).toEqual(1);
+			expect(recorder.lastActiveIndex()).toEqual(0);
 			expect(recorder.getValue()).toEqual('hello world');
 		});
 	}

@@ -10,7 +10,8 @@
   "scripts": {
     "build": "rollup -c",
     "build:publish": "yarn build && yarn publish",
-    "test": "jest --watchAll --coverage --coverageDirectory=./coverage/jest"
+    "test": "jest --watchAll --coverage --coverageDirectory=./coverage/jest",
+    "coverage:upload": "./node_modules/.bin/codecov --token='93e65be2-5337-451a-b8f0-fba108e22431'"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.4",

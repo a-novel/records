@@ -36,22 +36,12 @@ class LocalHistory {
 			this.#value = content;
 		}
 
-		if (hasContent && !hasRecords) {
-			// Default content is counted as an early modification, and is thus added to record history.
-			this.#records = [{
-				from: '',
-				to: content,
-				caret: {
-					start: 0,
-					end: 0
-				},
-				active: true,
-			}];
-		}
-
 		// Add records from a previous history.
 		if (hasRecords) {
 			this.#records.push(...records);
+			for (const recordIndex in this.#records.slice(0, this.lastActiveIndex() + 1)) {
+				this.#records[recordIndex] = this.applyRecord(this.#records[recordIndex]);
+			}
 		}
 	}
 
