@@ -10,7 +10,7 @@ env.js
 junit.xml
 Jenkinsfile
 
-playground/
+coverage/
 src/
 
 tests/
