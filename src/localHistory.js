@@ -34,16 +34,22 @@ class LocalHistory {
 
 		if (hasContent) {
 			this.#value = content;
+			this.#initialValue = content;
 		}
 
 		// Add records from a previous history.
 		if (hasRecords) {
 			this.#records.push(...records);
 			for (const recordIndex in this.#records.slice(0, this.lastActiveIndex() + 1)) {
-				this.#records[recordIndex] = this.applyRecord(this.#records[recordIndex]);
+				this.#records[recordIndex] = this.#applyRecord(this.#records[recordIndex]);
 			}
 		}
 	}
+
+	/**
+	 * @type {string}
+	 */
+	#initialValue;
 
 	/**
 	 * Check if a value is representative of its history records. If not,
@@ -52,7 +58,7 @@ class LocalHistory {
 	 * @return {string}
 	 */
 	checkIntegrity = () => {
-		const mirror = new LocalHistory('');
+		const mirror = new LocalHistory(this.#initialValue || '');
 
 		for (const record of this.#records.filter(x => x.active)) {
 			mirror.push(record);
@@ -86,7 +92,7 @@ class LocalHistory {
 	 * @param {HistoryRecord} record
 	 * @return {HistoryRecord}
 	 */
-	revertRecord = record => {
+	#revertRecord = record => {
 		record.to = this.#value.slice(record.caret.start, record.caret.start + record.to.length);
 		record.active = false;
 
@@ -101,7 +107,7 @@ class LocalHistory {
 	 * @param {HistoryRecord} record
 	 * @return {HistoryRecord}
 	 */
-	applyRecord = record => {
+	#applyRecord = record => {
 		record.from = this.#value.slice(record.caret.start, record.caret.end);
 		record.active = true;
 
@@ -120,7 +126,7 @@ class LocalHistory {
 	apply = ct => {
 		const last = this.lastActiveIndex() + 1; // We want the first non active one.
 		for (let i = last; i < (last + ct) && i < this.#records.length; i++) {
-			this.#records[i] = this.applyRecord(this.#records[i]);
+			this.#records[i] = this.#applyRecord(this.#records[i]);
 		}
 	};
 
@@ -132,7 +138,7 @@ class LocalHistory {
 	revert = ct => {
 		const last = this.lastActiveIndex();
 		for (let i = last; i > (last - ct) && i >= 0; i--) {
-			this.#records[i] = this.revertRecord(this.#records[i]);
+			this.#records[i] = this.#revertRecord(this.#records[i]);
 		}
 	};
 
@@ -148,11 +154,11 @@ class LocalHistory {
 			return;
 		}
 
-		this.#records[last] = this.applyRecord(this.#records[last]);
+		this.#records[last] = this.#applyRecord(this.#records[last]);
 
 		while (last < (this.#records.length - 1) && callback(this.#records[last + 1], this.#records[last])) {
 			last++;
-			this.#records[last] = this.applyRecord(this.#records[last]);
+			this.#records[last] = this.#applyRecord(this.#records[last]);
 		}
 	};
 
@@ -168,11 +174,11 @@ class LocalHistory {
 			return;
 		}
 
-		this.#records[last] = this.revertRecord(this.#records[last]);
+		this.#records[last] = this.#revertRecord(this.#records[last]);
 
 		while (last > 0 && callback(this.#records[last - 1], this.#records[last])) {
 			last--;
-			this.#records[last] = this.revertRecord(this.#records[last]);
+			this.#records[last] = this.#revertRecord(this.#records[last]);
 		}
 	};
 
@@ -184,7 +190,7 @@ class LocalHistory {
 	 */
 	push = record => {
 		this.#records = this.#records.filter(record => record.active);
-		record = this.applyRecord(record);
+		record = this.#applyRecord(record);
 		this.#records.push(record);
 		return record;
 	};
