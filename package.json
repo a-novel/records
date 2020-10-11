@@ -1,6 +1,6 @@
 {
   "name": "@anovel/records",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "History record tools for undo/redo custom algorithms.",
   "main": "./lib/index.js",
   "repository": "https://github.com/a-novel/records",

@@ -188,7 +188,7 @@ class LocalHistory {
 		let last = this.lastActiveIndex();
 
 		if (last < 0) {
-			return;
+			return [];
 		}
 
 		const rollback = [this.#revertRecord(this.#records[last])];
